@@ -1,0 +1,22 @@
+menu "example: human_face_recognition"
+
+    config BOARD_STATUS_LED_ENABLE
+        bool "Enable WS2812 status LED on GPIO 48"
+        default y
+        help
+            Yellow = face in frame, green = recognized.
+            Disable if your board has no addressable LED on GPIO 48.
+
+    choice DB_FILE_SYSTEM
+        prompt "database file system"
+        default DB_FATFS_SDCARD
+        help
+            fatfs support flash/sdcard. spiffs only support flash.
+        config DB_FATFS_FLASH
+            bool "fatfs_flash"
+        config DB_FATFS_SDCARD
+            bool "fatfs_sdcard"
+        config DB_SPIFFS
+            bool "spiffs"
+    endchoice
+endmenu
