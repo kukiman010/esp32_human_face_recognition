@@ -4,6 +4,7 @@
 #include "freertos/semphr.h"
 #include "freertos/task.h"
 
+#include "face_preview.h"
 #include "board_camera.h"
 #include "board_config.h"
 #include "board_status_led.h"
@@ -23,6 +24,7 @@
 #include <cstring>
 #include <dirent.h>
 #include <filesystem>
+#include <list>
 #include <string>
 #include <strings.h>
 #include <vector>
@@ -334,10 +336,12 @@ esp_err_t face_app_run(const char *db_path)
         int matched_id = -1;
         float matched_sim = 0.0f;
         size_t face_count = 0;
+        std::list<dl::detect::result_t> faces_snapshot;
 
         xSemaphoreTake(s_app.lock, portMAX_DELAY);
         auto &faces = s_app.detector->run(img);
         face_count = faces.size();
+        faces_snapshot.assign(faces.begin(), faces.end());
 
         if (!faces.empty()) {
             if (s_app.enroll_requested) {
@@ -359,6 +363,8 @@ esp_err_t face_app_run(const char *db_path)
             }
         }
         xSemaphoreGive(s_app.lock);
+
+        face_preview_update(fb, faces_snapshot, matched_id, matched_sim);
 
         esp_camera_fb_return(fb);
         frame_count++;
@@ -399,4 +405,19 @@ esp_err_t face_app_run(const char *db_path)
     }
 
     return ESP_OK;
+}
+
+static void face_app_task(void *arg)
+{
+    face_app_run((const char *)arg);
+}
+
+esp_err_t face_app_start(const char *db_path)
+{
+    static char path_storage[128];
+    strncpy(path_storage, db_path, sizeof(path_storage) - 1);
+    path_storage[sizeof(path_storage) - 1] = '\0';
+
+    BaseType_t ok = xTaskCreatePinnedToCore(face_app_task, "face_app", 16384, path_storage, 3, NULL, 1);
+    return ok == pdPASS ? ESP_OK : ESP_FAIL;
 }

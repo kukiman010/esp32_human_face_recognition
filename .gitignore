@@ -19,3 +19,7 @@ pytest_embedded_log/
 dependencies.lock
 
 faces/*
+main/wifi_secrets.h
+
+# esp-idf component manager (idf.py build)
+managed_components/

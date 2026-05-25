@@ -1,7 +1,9 @@
 #include "board_camera.h"
 #include "board_config.h"
 #include "board_status_led.h"
+#include "board_wifi.h"
 #include "face_app.h"
+#include "face_preview.h"
 #include "spiflash_fatfs.hpp"
 
 #include "bsp/esp-bsp.h"
@@ -31,6 +33,11 @@ extern "C" void app_main(void)
 
     ESP_ERROR_CHECK(board_camera_init());
     board_status_led_init();
+    face_preview_init();
+
+#if CONFIG_BOARD_WEB_ENABLE
+    ESP_ERROR_CHECK(board_wifi_init());
+#endif
 
 #if CONFIG_DB_FATFS_FLASH
     auto db_path = std::filesystem::path(CONFIG_SPIFLASH_MOUNT_POINT) / "face.db";
@@ -43,5 +50,5 @@ extern "C" void app_main(void)
     ESP_LOGI(TAG, "Database: %s", db_path.string().c_str());
     ESP_LOGI(TAG, "Type 'help' in monitor for commands");
 
-    face_app_run(db_path.string().c_str());
+    face_app_start(db_path.string().c_str());
 }

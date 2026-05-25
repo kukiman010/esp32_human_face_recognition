@@ -6,8 +6,7 @@
 extern "C" {
 #endif
 
-/** Start detect/recognize loop in a background task. */
-esp_err_t face_app_start(const char *db_path);
+esp_err_t web_server_start(void);
 
 #ifdef __cplusplus
 }

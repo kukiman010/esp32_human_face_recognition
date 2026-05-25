@@ -1,0 +1,54 @@
+menu "example: human_face_recognition"
+
+    config BOARD_STATUS_LED_ENABLE
+        bool "Enable WS2812 status LED on GPIO 48"
+        default y
+        help
+            Yellow = face in frame, green = recognized.
+            Disable if your board has no addressable LED on GPIO 48.
+
+    config BOARD_WEB_ENABLE
+        bool "Enable HTTP web preview (WiFi required)"
+        default y
+
+    config BOARD_WIFI_SSID
+        string "WiFi SSID"
+        default "cookiess"
+        depends on BOARD_WEB_ENABLE
+
+    config BOARD_WIFI_PASSWORD
+        string "WiFi password"
+        default "RbMLik918"
+        depends on BOARD_WEB_ENABLE
+
+    config BOARD_WIFI_AP_ENABLE
+        bool "Also start SoftAP for direct browser access"
+        default y
+        depends on BOARD_WEB_ENABLE
+        help
+            Creates a second WiFi network (default FaceCam) at 192.168.4.1.
+            Use this if your router blocks client-to-client traffic (AP isolation).
+
+    config BOARD_WIFI_AP_SSID
+        string "SoftAP SSID"
+        default "FaceCam"
+        depends on BOARD_WIFI_AP_ENABLE
+
+    config BOARD_WIFI_AP_PASSWORD
+        string "SoftAP password (min 8 chars)"
+        default "facecam123"
+        depends on BOARD_WIFI_AP_ENABLE
+
+    choice DB_FILE_SYSTEM
+        prompt "database file system"
+        default DB_FATFS_SDCARD
+        help
+            fatfs support flash/sdcard. spiffs only support flash.
+        config DB_FATFS_FLASH
+            bool "fatfs_flash"
+        config DB_FATFS_SDCARD
+            bool "fatfs_sdcard"
+        config DB_SPIFFS
+            bool "spiffs"
+    endchoice
+endmenu
