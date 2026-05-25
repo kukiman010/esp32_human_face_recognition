@@ -20,6 +20,7 @@ dependencies.lock
 
 faces/*
 main/wifi_secrets.h
+main/Kconfig.projbuild
 
 # esp-idf component manager (idf.py build)
 managed_components/

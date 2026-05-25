@@ -13,12 +13,12 @@ menu "example: human_face_recognition"
 
     config BOARD_WIFI_SSID
         string "WiFi SSID"
-        default "cookiess"
+        default ""
         depends on BOARD_WEB_ENABLE
 
     config BOARD_WIFI_PASSWORD
         string "WiFi password"
-        default "RbMLik918"
+        default ""
         depends on BOARD_WEB_ENABLE
 
     config BOARD_WIFI_AP_ENABLE
